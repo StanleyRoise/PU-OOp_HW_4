@@ -1,0 +1,110 @@
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import javax.swing.*;
+import javax.swing.border.*;
+
+public class BabaYaga {
+
+    private final JPanel gui = new JPanel(new BorderLayout(3, 3));
+    private JButton[][] BoardSquares = new JButton[8][8];
+    private JPanel Board;
+    private final JLabel message = new JLabel(
+            "BabaYaga se tursi!");
+    private static final String COLS = "ABCDEFGH";
+
+    BabaYaga() {
+        initializeGui();
+    }
+
+    public final void initializeGui() {
+
+        gui.setBorder(new EmptyBorder(5, 5, 5, 5));
+        JToolBar tools = new JToolBar();
+        tools.setFloatable(false);
+        gui.add(tools, BorderLayout.PAGE_START);
+        tools.add(new JButton("New"));
+        tools.add(new JButton("Save"));
+        tools.addSeparator();
+        tools.add(new JButton("Restart"));
+        tools.addSeparator();
+        tools.add(message);
+
+        gui.add(new JLabel("?"), BorderLayout.LINE_START);
+
+        Board = new JPanel(new GridLayout(0, 9));
+        Board.setBorder(new LineBorder(Color.BLACK));
+        gui.add(Board);
+
+
+        Insets buttonMargin = new Insets(0,0,0,0);
+        for (int ii = 0; ii < BoardSquares.length; ii++) {
+            for (int jj = 0; jj < BoardSquares[ii].length; jj++) {
+                JButton b = new JButton();
+                b.setMargin(buttonMargin);
+
+                ImageIcon icon = new ImageIcon(
+                        new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
+                b.setIcon(icon);
+                if ((jj % 2 == 1 && ii % 2 == 1)
+
+                        || (jj % 2 == 0 && ii % 2 == 0)) {
+                    b.setBackground(Color.RED);
+                } else {
+                    b.setBackground(Color.BLUE);
+                }
+                BoardSquares[jj][ii] = b;
+            }
+        }
+
+
+        Board.add(new JLabel(""));
+
+        for (int ii = 0; ii < 8; ii++) {
+            Board.add(
+                    new JLabel(COLS.substring(ii, ii + 1),
+                            SwingConstants.CENTER));
+        }
+
+        for (int ii = 0; ii < 8; ii++) {
+            for (int jj = 0; jj < 8; jj++) {
+                switch (jj) {
+                    case 0:
+                        Board.add(new JLabel("" + (ii + 1),
+                                SwingConstants.CENTER));
+                    default:
+                        Board.add(BoardSquares[jj][ii]);
+                }
+            }
+        }
+    }
+
+    public final JComponent getChessBoard() {
+        return Board;
+    }
+
+    public final JComponent getGui() {
+        return gui;
+    }
+
+    public static void main(String[] args) {
+        Runnable r = new Runnable() {
+
+            @Override
+            public void run() {
+                BabaYaga cb =
+                        new BabaYaga();
+
+                JFrame f = new JFrame("GPS");
+                f.add(cb.getGui());
+                f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                f.setLocationByPlatform(true);
+
+
+                f.pack();
+
+                f.setMinimumSize(f.getSize());
+                f.setVisible(true);
+            }
+        };
+        SwingUtilities.invokeLater(r);
+    }
